@@ -4,14 +4,30 @@ cookieParser=require("cookie-parser"),
  app = express();
 
 //scoket
-var WebSocketServer = require('ws').Server
-    , wss = new WebSocketServer({port: 8010});
+var WebSocketServer = require('ws').Server,
+ wss = new WebSocketServer({port: 8010});
     wss.on('connection', function(ws) {
         ws.on('message', function(message) {
-        console.log('Received from client: %s', message);
-        ws.send('Server received from client: ' + message);
-    });
+                  
+                  ws.send('Server received from client: ' + message);
+                  
+                  onS(ws,0);
+            });
  });
+ function onS(ws,n){
+    
+    var t=setInterval(function(){
+        n++;
+       
+        ws.send('Server received from client: ' + n);
+        
+      
+    },2000);
+    ws.onclose=function(e,tt){
+        clearInterval(tt);
+        console.log('连接关闭')
+    }
+ }
  var myController= require('./controller/index.js');
 //路由
 var index = require('./routes/index.js');
