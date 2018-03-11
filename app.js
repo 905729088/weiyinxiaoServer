@@ -4,7 +4,14 @@ cookieParser=require("cookie-parser"),
  app = express();
 
 //scoket
-
+var WebSocketServer = require('ws').Server
+    , wss = new WebSocketServer({port: 8010});
+    wss.on('connection', function(ws) {
+        ws.on('message', function(message) {
+        console.log('Received from client: %s', message);
+        ws.send('Server received from client: ' + message);
+    });
+ });
  var myController= require('./controller/index.js');
 //路由
 var index = require('./routes/index.js');
