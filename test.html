@@ -20,11 +20,11 @@
 
         function onTest(callback) {
             $.ajax({
-                url: 'http://localhost:8083/message/test11', //"http://localhost:8083/phone",
-                type: "get",
+                url: 'http://localhost:8083/Phone', //"http://localhost:8083/phone",
+                type: "post",
                 data: {
                     ip: '192.168.123.3',
-                    ime: "end1",
+                    ime: "end3",
                     mode: "true"
                 },
                 success: (data) => {
