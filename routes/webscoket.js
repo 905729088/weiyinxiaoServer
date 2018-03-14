@@ -10,11 +10,15 @@ wss.on('connection', function(ws) {
     let webName = webNum; //本次连接的唯一标识
     webArr.push({ name: webName, webSend: ws });
     ws.on('close', (code, reason) => {
-        let arrIndex = webArr.findIndex(function(value) {
-            return value.name == webName;
+        console.log(webArr);
+        webArr = webArr.filter((value) => {
+            return value.name != webName;
         });
-        webArr.splice(arrIndex, 1);
-        console.log("连接关闭", code);
+        // let arrIndex = webArr.findIndex(function(value) {
+        //     return value.name == webName;
+        // });
+        // webArr.splice(arrIndex, 1);
+        console.log("连接关闭", code, webArr.length);
     })
 });
 //接收app的消息
