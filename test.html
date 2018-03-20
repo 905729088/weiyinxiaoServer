@@ -11,6 +11,7 @@
 
 <body>
     <div id="btn" style="cursor:pointer">test</div>
+    <iframe id="QQServer" style="display:none;" src="tencent://message/?uin=905729088&amp;Site=&amp;menu=yes"></iframe>
     <div id="btn1" style="cursor:pointer">guanbi</div>
     <textarea name="" id="" style='width: 200px;overflow: hidden;display: block; outline: 0 none;white-space: nowrap;' cols="10" rows="1"></textarea>
     <script>
@@ -20,12 +21,17 @@
 
         function onTest(callback) {
             $.ajax({
-                url: 'http://localhost:8083/Message', //"http://localhost:8083/phone",
-                type: "post",
+                url: 'http://localhost:5758/ipaddr', //"http://localhost:8083/phone",
+                type: "get",
                 data: {
-                    ip: '192.168.123.3',
-                    ime: "end3",
-                    mode: "true"
+                    ip: '192.168.1.' + 15,
+                    ime: 'abcd',
+                    mode: '华为p4',
+                    stata: true, //是否在线
+                    phoneNuber: '123456789', //手机号码
+                    taskCount: 5, //任务个数
+                    addCount: 0, //添加次数
+                    weChatId: 356124361 //微信号
                 },
                 success: (data) => {
                     callback(data);
