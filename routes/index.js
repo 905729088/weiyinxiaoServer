@@ -9,18 +9,18 @@ let phoneList = [];
 //     console.log("收到" + req.query.id);
 // })
 
-router.get('/ipaddr', function(req, res, next) {
+router.post('/ipaddr', function(req, res, next) {
     console.log("ipadder收到");
     res.send({ code: 0, messmage: "succsess" });
     const nowData = new Date();
     const ipaddr = {
-            ip: req.query.ip,
-            map: req.query.map,
-            mode: req.query.mode,
-            phoneNuber: req.query.phoneNuber, //手机号码
-            taskCount: req.query.taskCount || 0, //任务个数
-            addCount: req.query.addCount || 0, //添加次数
-            weChatId: req.query.weChatId, //微信号
+            ip: req.body.ip,
+            map: req.body.map,
+            mode: req.body.mode,
+            phoneNuber: req.body.phoneNuber, //手机号码
+            taskCount: req.body.taskCount || 0, //任务个数
+            addCount: req.body.addCount || 0, //添加次数
+            weChatId: req.body.weChatId, //微信号
             lastTime: new Date().getTime()
         }
         //判断该手机是否已经连接了  -1 没有      >=0 有
