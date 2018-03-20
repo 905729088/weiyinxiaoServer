@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser("123456789abc"));
 app.use('/', index);
-app.use('/Message', webSocket);
+app.use('/message', webSocket);
 
 app.get('/', function(req, res) {
     res.send('Hello World');
