@@ -3,21 +3,6 @@ const router = express.Router();
 const request = require('request');
 let phoneList = [];
 
-for (let i = 0; i < 30; i++) {
-    const nowData = new Date();
-    const ipaddr = {
-        ip: 123,
-        map: 12312,
-        mode: 12312,
-        phoneNuber: 2131231, //手机号码
-        taskCount: 12312 || 0, //任务个数
-        addCount: 12312 || 0, //添加次数
-        weChatId: 312312, //微信号
-        lastTime: new Date().getTime()
-    }
-    phoneList.push(ipaddr);
-}
-
 //app端接口
 router.post('/ipaddr', function(req, res, next) {
     console.log("ipadder收到");
@@ -25,7 +10,7 @@ router.post('/ipaddr', function(req, res, next) {
     const nowData = new Date();
     const ipaddr = {
             ip: req.body.ip,
-            map: req.body.map,
+            mac: req.body.mac,
             mode: req.body.mode,
             phoneNuber: req.body.phoneNuber, //手机号码
             taskCount: req.body.taskCount || 0, //任务个数
@@ -46,29 +31,33 @@ router.post('/ipaddr', function(req, res, next) {
 
 });
 
-router.post('/notificationwebsocket', function(req, res, next) {
-    console.log("inotificationwebsocket收到");
+router.post('/taskStatus', function(req, res, next) {
     res.send({ code: 0, messmage: "succsess" });
-
 });
 
 
 
 //checkPhoneList();
-async function checkPhoneList() {
-    let arr = [];
-    let newT = new Date().getTime();
-    for (let i = 0; i < phoneList.length; i++) {
-        if (newT - phoneList[i].lastTime < 10) {
 
-        }
-
-    }
-}
 
 //前端接口
 router.post('/phone', function(req, res, next) {
     console.log("Phone收到");
-    res.send(phoneList);
+    checkPhoneListDate(res);
+
 });
+
+async function checkPhoneListDate(res, t = 120) {
+    //删除已经超过两分钟的数据
+    let arr = [];
+    let newT = new Date().getTime() + 10;
+    for (let i = 0; i < phoneList.length; i++) {
+        if (newT - phoneList[i].lastTime < 1000 * t) {
+            arr.push(phoneList[i]);
+        }
+    }
+    phoneList = arr;
+    res.send(phoneList);
+}
+
 module.exports = router;
