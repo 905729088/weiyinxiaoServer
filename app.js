@@ -2,8 +2,8 @@ const express = require('express'),
     bodyParser = require("body-parser"),
     cookieParser = require("cookie-parser"),
     app = express(),
-    index = require('./routes/index.js'), //路由
-    webSocket = require('./routes/webscoket.js');
+    index = require('./routes/index.js'); //路由
+//webSocket = require('./routes/webscoket.js');
 
 //解決跨越问题
 const allowCrossDomain = (req, res, next) => {
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser("123456789abc"));
 app.use('/', index);
-app.use('/message', webSocket);
+//app.use('/message', webSocket);
 
 app.get('/', function(req, res) {
     res.send('Hello World');

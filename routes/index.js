@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const request = require('request');
 const http = require('http');
-let phoneList = [];
-let completeTask = [];
-
+let phoneList = []; //上线手机数组
+let completeTask = []; //完成任务数组
+let messageArr = []; //消息通知内容数组
 // {
 //     ip: '192.168.1.113',
 //     mac: 'AV:BC:AD:LA1C1',
@@ -34,7 +34,7 @@ router.post('/ipaddr', function(req, res, next) {
     arrIndex = phoneList.findIndex(function(value) {
         return value.mac == ipaddr.mac;
     });
-    //console.log("ipadder收到", ipaddr);
+    console.log("ipadder收到", ipaddr);
     if (arrIndex < 0) {
         phoneList.push(ipaddr);
     } else {
@@ -53,6 +53,34 @@ router.post('/taskStatus', function(req, res, next) {
     //}
 
 });
+
+
+router.post('/message', function(req, res, next) {
+    res.send({ code: 1, message: 'success' }); //返回给后台
+
+    let index = messageArr.findIndex(function(value) {
+        return value.ip == req.body.ip && value.mac == req.body.mac && value.title == req.body.title;
+    });
+    let strArr = req.body.text.split(req.body.title + ': ');
+    let msgnum = Number(strArr[0].match(/\d+/g));
+    let msg = strArr[1];
+    if (index < 0) {
+
+        messageArr.push({
+            ip: req.body.ip,
+            mac: req.body.mac,
+            title: req.body.title,
+            msg: msg,
+            msgnum: msgnum,
+            receivetime: (new Date).getTime(),
+        });
+    } else {
+        messageArr[index].msg = req.body.msg;
+        messageArr[index].msgnum = req.body.msgnum;
+        messageArr[index].receivetime = (new Date).getTime();
+    }
+    //console.log('================>', messageArr);
+})
 
 //checkPhoneList();
 
@@ -79,10 +107,53 @@ router.post('/AddFriend', function(req, res, next) {
     onHttp(obj);
 });
 
+//群发消息
+router.post('/mass', function(req, res, next) {
+    console.log("群发消息", req.body);
+
+    let obj = {
+        hostIp: req.body.ip,
+        interface: '/Mass',
+        data: req.body.msg,
+        res: res
+
+    }
+    onHttp(obj);
+});
+
+//发朋友圈
+router.post('/FriendCircle', function(req, res, next) {
+    console.log("发朋友圈", req.body);
+
+    let obj = {
+        hostIp: req.body.ip,
+        interface: '/FriendCircle',
+        data: req.body.msg,
+        res: res
+
+    }
+    onHttp(obj);
+});
+
+//聊天回复
+router.post('/getmessgae', function(req, res, next) {
+    // console.log("聊天回复 ip mac", req.body);
+    let sendArr = [];
+    let rArr = req.body.arr;
+    for (let i = 0; i < rArr.length; i++) {
+        for (let j = 0; j < messageArr.length; j++) {
+            if (rArr[i].ip == messageArr[j].ip && rArr[i].mac == messageArr[j].mac) {
+                sendArr.push(Object.assign(messageArr[j], { wechat: rArr[i].wechat }));
+                messageArr.splice(j, 1);
+            }
+        }
+    }
+    res.send(sendArr);
+
+});
+
 //查询任务状态
 router.post('/checkTask', function(req, res, next) {
-
-
     //if (req.body.length == 0) return;
     let dataArr = req.body;
     for (let i = 0; i < completeTask.length; i++) {
@@ -97,6 +168,38 @@ router.post('/checkTask', function(req, res, next) {
 
 });
 
+//暂停任务
+router.post('/PauseWork', function(req, res, next) {
+    console.log("暂停任务");
+    let arr = req.body;
+    for (let i = 0; i < arr.length; i++) {
+        let obj = {
+            hostIp: arr[i].ip,
+            interface: '/PauseWork',
+            data: arr[i].taskId,
+            res: res
+        }
+        onHttp(obj);
+    }
+    res.send('任务暂停');
+});
+
+//继续任务
+router.post('/ProceedWork', function(req, res, next) {
+    console.log("继续任务");
+    let arr = req.body;
+
+    for (let i = 0; i < arr.length; i++) {
+        let obj = {
+            hostIp: arr[i].ip,
+            interface: '/ProceedWork',
+            data: arr[i].taskId,
+            res: res
+        }
+        onHttp(obj);
+    }
+    res.send('任务继续');
+});
 async function checkPhoneListDate(res, t = 120) {
     //删除已经超过两分钟的数据
     let arr = [];

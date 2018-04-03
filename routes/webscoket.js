@@ -22,11 +22,5 @@ wss.on('connection', function(ws) {
     })
 });
 //接收app的消息
-router.post('/', function(req, res, next) {
 
-    res.send({ code: 1, message: 'success' }); //返回给后台
-    for (let value of webArr) {
-        value.webSend.send(JSON.stringify(dy)); //发送给前端页面
-    }
-})
 module.exports = router;
