@@ -25,24 +25,15 @@
         </div>
     </div>
     <script>
-        // onTest(function(data) {
-        //     console.log(data);
-        // });
+        onTest(function(data) {
+            console.log(data);
+        });
 
         function onTest(callback) {
             $.ajax({
-                url: 'http://localhost:5758/ipaddr', //"http://localhost:8083/phone",
-                type: "get",
-                data: {
-                    ip: '192.168.1.' + 15,
-                    ime: 'abcd',
-                    mode: '华为p4',
-                    stata: true, //是否在线
-                    phoneNuber: '123456789', //手机号码
-                    taskCount: 5, //任务个数
-                    addCount: 0, //添加次数
-                    weChatId: 356124361 //微信号
-                },
+                url: 'http://localhost:5758/mytest', //"http://localhost:8083/phone",PauseWork /'http://192.168.1.69:5758/ipaddr', 
+                type: "post",
+                data: "{ip: '192.168.1.' + 15,ime: 'abcd',mode: '华为p4',stata: true}",
                 success: (data) => {
                     callback(data);
 

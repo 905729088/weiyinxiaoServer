@@ -16,6 +16,14 @@ let messageArr = []; //消息通知内容数组
 //     model: '华为',
 //     connecttime: new Date().getTime()
 // }
+//测试
+//app端接口
+router.post('/mytest', function(req, res, next) { //G.api.proxypost(G.sid,'http://192.168.1.147:5758/mytest',null,"{a:1}")
+    getBody(req, data => {
+        console.log('测试2', typeof(data));
+        res.send({ code: 0, messmage: "succsess" });
+    });
+});
 //app端接口
 router.post('/ipaddr', function(req, res, next) {
     res.send({ code: 0, messmage: "succsess" });
@@ -45,11 +53,10 @@ router.post('/ipaddr', function(req, res, next) {
 
 router.post('/taskStatus', function(req, res, next) {
     res.send({ code: 0, messmage: "succsess" });
-    console.log(req.body);
     // if (req.body.status === '0') {
     //     console.log('添加成功');
-    console.log('任务结束');
-    completeTask.push(req.body);
+    console.log('任务结束', req.body);
+    completeTask.push(req.body, req.body);
     //}
 
 });
@@ -57,13 +64,13 @@ router.post('/taskStatus', function(req, res, next) {
 
 router.post('/message', function(req, res, next) {
     res.send({ code: 1, message: 'success' }); //返回给后台
-
+    console.log(req.body);
     let index = messageArr.findIndex(function(value) {
         return value.ip == req.body.ip && value.mac == req.body.mac && value.title == req.body.title;
     });
     let strArr = req.body.text.split(req.body.title + ': ');
-    let msgnum = Number(strArr[0].match(/\d+/g));
-    let msg = strArr[1];
+    let msgnum = strArr.length != 1 ? Number(strArr[0].match(/\d+/g)) : 1;
+    let msg = strArr.length != 1 ? strArr[1] : strArr[0];
     if (index < 0) {
 
         messageArr.push({
@@ -137,7 +144,7 @@ router.post('/FriendCircle', function(req, res, next) {
 
 //聊天回复
 router.post('/getmessgae', function(req, res, next) {
-    // console.log("聊天回复 ip mac", req.body);
+    //console.log("聊天回复 ip mac", req.body);
     let sendArr = [];
     let rArr = req.body.arr;
     for (let i = 0; i < rArr.length; i++) {
@@ -223,7 +230,22 @@ async function checkPhoneListDate(res, t = 120) {
 // console.log('========>', onHttp(p).then(res => {
 //     console.log('+++++++++++', res);
 // }));
+// 获取body
+function getBody(req, fn) {
+    let data = '';
+    // console.log(req.body);
+    req.on('data', function(chunk) {
+        data += chunk; //一定要使用+=，如果body=chunk，因为请求favicon.ico，body会等于{}
+        //  console.log(chunk.toString());
+        //  console.log("chunk:", chunk.toString());
+    });
+    req.on('end', function() {
+        let objJson = (new Function("return " + data))(); //将string 转化成Json格式
 
+        fn(objJson);
+    })
+
+}
 //node端请求app端接口
 async function onHttp(obj) { // ip  接口  发送的内容  回调函数 数据类型
 

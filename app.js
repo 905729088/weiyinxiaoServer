@@ -15,7 +15,7 @@ const allowCrossDomain = (req, res, next) => {
 
 app.use(allowCrossDomain)
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser("123456789abc"));
 app.use('/', index);
 //app.use('/message', webSocket);
